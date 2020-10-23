@@ -3,7 +3,7 @@ Pasos para hacer un commit (i.e. subir mis cambios a Github):
 1. git add <archivos_a_subir> : les estoy diciendo a git que <archivos_a_subir> es lo que quiero que incluyas en el commit. 
 2. git commit -m "<mensaje>": le dice a git que estás listo para subirlo a Github e indicas en un mensaje los cambios que hiciste. 
 3. git push : sincronizar tus archivos locales con un servidor (en este caso, Github)  
-
 otros comandos utiles  
 git status
 git pull 
+
