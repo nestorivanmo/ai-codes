@@ -94,7 +94,7 @@ def generarHijos(estado):
 		#y se activa la bandera	
 		for j in range(numeroDeReinas):
 			if estado[j][i]==1:
-				reinasTablero.append([i,j])
+				reinasTablero.append([j,i])
 				reina=1
 
 
@@ -128,7 +128,7 @@ def generarHijos(estado):
 		for r in reinasTablero:
 
 			#Se verifica el renglón
-			if i==r[1]:
+			if i==r[0]:
 				bandera=1
 				break	#Se sale del for debido a que hay una reina en ese renglón
 
@@ -137,10 +137,10 @@ def generarHijos(estado):
 			#columna-(posición en la columna) y columna+(posición en la columna)
 			
 			diagonalN1=columnaVacia-i 
-			diagonal1=r[0]-r[1]
+			diagonal1=r[1]-r[0]
 			
 			diagonalN2=columnaVacia+i 	
-			diagonal2=r[0]+r[1] 	
+			diagonal2=r[1]+r[0] 	
 
 			#Si alguna condición se cumple significa que están el diagonal
 			if diagonalN1==diagonal1 or diagonalN2==diagonal2:	
