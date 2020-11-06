@@ -138,7 +138,7 @@ class NQueenSolver:
             list of matrixes where one matrix represents a solution to the 
             problem
         """
-        print("Chessboard #: ", self.num_boards)
+        print(f"Chessboard #{self.num_boards}")
         for pos in range(self.num_queens):
             print(chessboard[pos])
         print()
@@ -232,25 +232,27 @@ class NQueenSolver:
         in a i,j position of the chessboard, if it's possible, then, it will append
         that new chessboard to the list of children.
         """
-        flag = 0	
+        possible_to_add_queen = True
         for i in range(self.num_queens):
             for r in queens_in_board:
                 if i == r[0]:
-                    flag = 1
+                    possible_to_add_queen = False
                     break
-                diagonalN1=empty_column_index-i 
-                diagonal1=r[1]-r[0]
-                diagonalN2=empty_column_index+i 	
-                diagonal2=r[1]+r[0] 	
-                if diagonalN1==diagonal1 or diagonalN2==diagonal2:	
-                    flag=1
+
+                curr_queen_first_diagonal=empty_column_index-i 
+                new_queen_first_diagonal = r[1] - r[0]
+                curr_queen_second_diagonal = empty_column_index + i 	
+                new_queen_second_diagonal = r[1] + r[0] 	
+                
+                if curr_queen_first_diagonal == new_queen_first_diagonal or curr_queen_second_diagonal == new_queen_second_diagonal:	
+                    possible_to_add_queen = False
                     break
             self.cost += 1
-            if flag==0: 
+            if possible_to_add_queen: 
                 new_state=copy.deepcopy(state)
                 new_state[i][empty_column_index]=1
                 children.append(new_state)
-            flag=0 
+            possible_to_add_queen = True
         return children
 
 if __name__ == "__main__":
