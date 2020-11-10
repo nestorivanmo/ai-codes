@@ -180,6 +180,7 @@ class NQueenSolver:
             children = self.generate_children(state)
             for child in children:
                 new_level.append(child)
+            del children
         return new_level
 
     def generate_children(self, state): 
@@ -252,7 +253,9 @@ class NQueenSolver:
                 new_state=copy.deepcopy(state)
                 new_state[i][empty_column_index]=1
                 children.append(new_state)
+                del new_state
             possible_to_add_queen = True
+        del queens_in_board
         return children
 
 if __name__ == "__main__":
