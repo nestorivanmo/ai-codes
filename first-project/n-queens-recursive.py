@@ -126,6 +126,7 @@ class NQueenSolver:
             for board in level:
                 self.num_boards += 1
                 self.print_chessboard(board)
+                return
             return
         self.bfs(self.generate_level(level,level_number), level_number + 1)
 
@@ -179,7 +180,6 @@ class NQueenSolver:
             children = self.generate_children(state)
             for child in children:
                 new_level.append(child)
-        print("Level number # ",level_number, "ends here")
         return new_level
 
     def generate_children(self, state): 
@@ -256,8 +256,7 @@ class NQueenSolver:
         return children
 
 if __name__ == "__main__":
-    print("N-queen problem. Insert the number of queens")
-    n_queens = int(input())
+    n_queens = int(input("N-queen problem. Insert the number of queens: "))
     (num_boards, cost) = NQueenSolver(n_queens).find_num_boards()
     print("Number of possible chessboards: ", num_boards)
     print("Final cost: ", cost)
