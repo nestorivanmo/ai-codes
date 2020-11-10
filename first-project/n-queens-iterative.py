@@ -80,13 +80,23 @@ def breadth(inicial, generador):
             hijos.append(hijo)
     return soluciones 
 
-if __name__ == '__main__':
-    print("N-queen problem. Insert the number of queens")
-    n_queens = int(input())
-    num_boards = 0
+def find_chessboards(n_queens, n_sols, verbose):
     boards = breadth(Tablero(n_queens), Tablero.genLevel)
-    print(f"One possible chessboard accomodation for {n_queens} queens: ")
-    for b in boards:
-        print(b)
-        break
-    print(f"Number of solutions for {n_queens} queens: {len(boards)}")
+    if verbose:
+        i = 0
+        for b in boards:
+            if i < n_sols:
+                print(b)
+            else:
+                break 
+            i += 1
+    print(f"{len(boards)} chessboards for {n_queens} queens")
+    
+
+if __name__ == '__main__':
+    n_queens = int(input("N-queen problem. Insert the number of queens: "))
+    verbose = int(input("Verbose? 0/1: "))
+    n_sols = None
+    if verbose:
+        n_sols = int(input("Insert the number of solutions to print: "))
+    find_chessboards(n_queens, n_sols, verbose)  
