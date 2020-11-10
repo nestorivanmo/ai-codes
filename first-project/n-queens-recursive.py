@@ -126,6 +126,7 @@ class NQueenSolver:
             for board in level:
                 self.num_boards += 1
                 self.print_chessboard(board)
+                break
             return
         self.bfs(self.generate_level(level,level_number), level_number + 1)
 
