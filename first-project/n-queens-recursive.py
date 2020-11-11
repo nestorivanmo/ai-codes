@@ -24,7 +24,7 @@ inside the nxn chess board where the queens cannot attack each other.
 import copy
 
 class NQueenSolver:
-    def __init__(self, num_queens):
+    def __init__(self, num_queens, num_sols_print):
         """NQueenSolver is a class that solves the n-queen problem by using breath
         first search (BFS) tree traversal algorithm. The idea behind this solution
         is to generate, on each iteration, a new set of chessboards combinations
@@ -59,6 +59,7 @@ class NQueenSolver:
             [[0]*self.num_queens for _ in range(self.num_queens)]
         ]
         self.num_boards = 0
+        self.num_sols_print = num_sols_print
 
     def find_num_boards(self):
         """Initial function that sets motion for the BFS algorithms. It will start
@@ -125,8 +126,9 @@ class NQueenSolver:
         if level_number == self.num_queens:
             for board in level:
                 self.num_boards += 1
-                self.print_chessboard(board)
-                return
+                if self.num_sols_print > 0:
+                    self.print_chessboard(board)
+                    self.num_sols_print -= 1
             return
         self.bfs(self.generate_level(level,level_number), level_number + 1)
 
@@ -260,6 +262,7 @@ class NQueenSolver:
 
 if __name__ == "__main__":
     n_queens = int(input("N-queen problem. Insert the number of queens: "))
-    (num_boards, cost) = NQueenSolver(n_queens).find_num_boards()
+    n_sols = int(input("Insert the number of solutions to print: "))
+    (num_boards, cost) = NQueenSolver(n_queens, n_sols).find_num_boards()
     print("Number of possible chessboards: ", num_boards)
     print("Final cost: ", cost)
