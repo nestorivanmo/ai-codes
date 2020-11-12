@@ -22,6 +22,8 @@ inside the nxn chess board where the queens cannot attack each other.
 """
 
 import copy
+import time
+import matplotlib.pyplot as plt 
 
 class NQueenSolver:
     def __init__(self, num_queens, num_sols_print):
@@ -263,6 +265,31 @@ class NQueenSolver:
 if __name__ == "__main__":
     n_queens = int(input("N-queen problem. Insert the number of queens: "))
     n_sols = int(input("Insert the number of solutions to print: "))
+    start = time.time()
     (num_boards, cost) = NQueenSolver(n_queens, n_sols).find_num_boards()
+    end = time.time()
     print("Number of possible chessboards: ", num_boards)
     print("Final cost: ", cost)
+    print("Final time: ", (end - start))
+    # low_n = int(input("min number of queens: "))
+    # max_n = int(input("max number of queens: "))
+    # times = []
+    # queens = []
+    # for n in range(low_n, max_n + 1):
+    #     start = time.time()
+    #     (boards, cost) = NQueenSolver(n, 0).find_num_boards()
+    #     end = time.time()
+    #     t = end - start 
+    #     times.append(t)
+    #     queens.append(n)
+    #     print(f"{n} queens {boards} boards: {t}")
+    # print(times)
+    # print(queens)
+
+    # minutes = [5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9]
+    # memory = [5418416, 6105008, 3805140, 4554196, 5251028, 2808704, 3414808, 981344, 981344]
+    # plt.ylabel('Tiempo de ejecución [min]')
+    # plt.xlabel('Memoria consumida [KB]')
+    # plt.title('BFS-iterative: time vs memory')
+    # plt.plot(minutes, memory)
+    # plt.show()

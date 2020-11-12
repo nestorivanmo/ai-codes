@@ -22,6 +22,8 @@ inside the nxn chess board where the queens cannot attack each other.
 """
 
 import copy
+import matplotlib.pyplot as plt
+import time
 
 class NQueenSolver:
     def __init__(self, num_queens, num_sols_print):
@@ -267,3 +269,31 @@ if __name__ == "__main__":
     (num_boards, cost) = NQueenSolver(n_queens, n_sols).find_num_boards()
     print("Number of possible chessboards: ", num_boards)
     print("Final cost: ", cost)
+    
+    # low_n = int(input("min number of queens: "))
+    # max_n = int(input("max number of queens: "))
+    # times = []
+    # queens = []
+    # for n in range(low_n, max_n + 1):
+    #     start = time.time()
+    #     (boards, cost) = NQueenSolver(n, 0).find_num_boards()
+    #     end = time.time()
+    #     t = end - start 
+    #     times.append(t)
+    #     queens.append(n)
+    #     print(f"{n} queens {boards} boards: {t}")
+    # print(times)
+    # print(queens)
+
+    # times = [0.001046895980834961, 0.003957986831665039,
+    #  0.0059130191802978516, 0.021417617797851562, 0.07078075408935547, 
+    #  0.36396169662475586, 1.880445957183838, 11.412727355957031, 66.44955396652222, 
+    #  486.25092363357544]
+    # queens = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+
+
+    # plt.ylabel('Tiempo de ejecución')
+    # plt.xlabel('Número de reinas')
+    # plt.title('n-queen BFS iterative')
+    # plt.plot(queens, times)
+    # plt.show()
