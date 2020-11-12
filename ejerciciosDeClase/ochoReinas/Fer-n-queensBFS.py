@@ -1,4 +1,5 @@
 class Tablero():
+    costo = 0
     def __init__(self, n):
         self.dimension = n
         self.reinas = set()
@@ -24,9 +25,9 @@ class Tablero():
             for x in range(0, self.dimension):
                 temp = x,y,
                 if temp not in self.reinas:
-                    cadena += "-"
+                    cadena += " - "
                 else:
-                    cadena += "Q"
+                    cadena += " Q "
             cadena += "\n"
         return cadena
 
@@ -65,23 +66,37 @@ class Tablero():
             dify = y - yi
             if difx == dify or difx == -dify:
                 return False    
-        return True            
+        return True   
+   
 
-def breadth(inicial, generador):
+def breadth(inicial, generador, n_sols, verbose):
     hijos = []
     hijos.append(inicial)
-    soluciones = set()
     level = inicial.dimension
-    while hijos:                
+    contador = 0
+    while hijos:
+        if n_sols == 0:
+            break                
         for hijo in generador(hijos.pop()):
+            Tablero.costo = Tablero.costo + 1
             if hijo.level == level:
-                soluciones.add(hijo)
-            hijos.append(hijo)
-    return soluciones 
+                if verbose:
+                    print(hijo)
+                contador = contador + 1
+                n_sols = n_sols - 1
+                if n_sols == 0:
+                    break
+            else:
+                hijos.append(hijo)
 
-prueba3 = Tablero(8)
-cont = 0
-for tablero in breadth(prueba3, Tablero.genLevel):
-    cont = cont + 1
-    print(tablero)
-print(cont)
+    print(f"{contador} chessboards for {level} queens")
+    print(f"cost: {Tablero.costo}")
+
+def find_chessboards(n_queens, n_sols, verbose):
+    breadth(Tablero(n_queens), Tablero.genLevel, n_sols, verbose)
+
+if __name__ == '__main__':
+    n_queens = int(input("N-queen problem. Insert the number of queens: "))
+    verbose = int(input("Verbose? 0/1: "))
+    n_sols = int(input("Insert the number of solutions: "))
+    find_chessboards(n_queens, n_sols, verbose)  
