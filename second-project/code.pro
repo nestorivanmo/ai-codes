@@ -21,7 +21,6 @@ secuentes([neg D|Gamma],Delta):-union([D],Delta,U),secuentes(Gamma,U),
 secuentes(Gamma,[C or D|Delta]):- union([C,D],Delta,U),secuentes(Gamma,U),
     write(Gamma),write(' |- '),writeln([C or D | Delta]).
 
-%Falta imprimir ramas
 secuentes([C or D | Gamma],Delta):-union([C],Gamma,U1),union([D],Gamma,U2),secuentes(U1,Delta),secuentes(U2,Delta),
     write([C or D | Gamma]), write(' |- '), writeln(Delta).
 
