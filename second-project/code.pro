@@ -56,6 +56,11 @@ secuentes(Gamma,[C dimplies D|Delta]):-union([C],Gamma,U1),union([D],Delta,U2),u
 secuentes(Gamma,[H|T]):-atom(H),buscarNA(T),union(T,[H],U),secuentes(Gamma,U), T \== [],
     write(Gamma),write('|-'),writeln([H|T]).
 
+secuentes([H|T],Delta):-
+  atom(H),buscarNA(T),union(T,[H],U),secuentes(Delta,U), T \== [],
+  write([H|T]),write('|-'),writeln(Delta).
+
+
 % Weakening
 
 secuentes(Gamma,Delta):-not(buscarNA(Gamma)),not(buscarNA(Delta)),buscar(Gamma, Delta),
