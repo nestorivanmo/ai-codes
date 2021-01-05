@@ -21,7 +21,6 @@ secuentes([neg D|Gamma],Delta):-union([D],Delta,U),secuentes(Gamma,U),
 secuentes(Gamma,[C or D|Delta]):- union([C,D],Delta,U),secuentes(Gamma,U),
     write(Gamma),write(' |- '),writeln([C or D | Delta]).
 
-%Falta imprimir ramas
 secuentes([C or D | Gamma],Delta):-union([C],Gamma,U1),union([D],Gamma,U2),secuentes(U1,Delta),secuentes(U2,Delta),
     write([C or D | Gamma]), write(' |- '), writeln(Delta).
 
@@ -56,6 +55,11 @@ secuentes(Gamma,[C dimplies D|Delta]):-union([C],Gamma,U1),union([D],Delta,U2),u
 
 secuentes(Gamma,[H|T]):-atom(H),buscarNA(T),union(T,[H],U),secuentes(Gamma,U), T \== [],
     write(Gamma),write('|-'),writeln([H|T]).
+
+secuentes([H|T],Delta):-
+  atom(H),buscarNA(T),union(T,[H],U),secuentes(Delta,U), T \== [],
+  write([H|T]),write('|-'),writeln(Delta).
+
 
 % Weakening
 
