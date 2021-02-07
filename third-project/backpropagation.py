@@ -41,11 +41,15 @@ def forward_propagate(X, W, L, verbose=False):
         Yi = np.array([Y_temp])
         R.append(Yi)
     if verbose:
-        output_hidden_layers(np.array(R))
+        output_hidden_layers(X, np.array(R))
     return np.array(R[-1])
 
-def output_hidden_layers(HL):
+def backward_propagate(Z, W, hidden_layers, verbose=False):
+    pass
+
+def output_hidden_layers(X, HL):
     num_layers = HL.shape[0]
+    print(f"Input: \n\t {X}")
     for i in range(1, num_layers + 1):
         if i < num_layers:
             print(f"Hidden layer #{i}: \n\t {HL[i-1]}")
@@ -81,7 +85,7 @@ def generate_weights(X, layers):
 
 
 """
-INP UT:
+INPUT:
 X = np.array([
         [0.5, 0.1]
     ])
@@ -147,6 +151,7 @@ def neural_network(X, Y, hidden_layers, verbose=False):
     Z = forward_propagate(X, W, hidden_layers, verbose)
     E = error(T, Z)
     print(E)
+    
 
 if __name__ == '__main__':
     X = np.array([[0.05, 0.1]])
