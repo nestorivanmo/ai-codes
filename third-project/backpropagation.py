@@ -1,5 +1,6 @@
 import numpy as np 
 import copy
+import random
 
 def net(w0, W, X):
     return (w0 + np.dot(W, X.T))[0]
@@ -42,10 +43,41 @@ def forward_propagate(X, W, L, verbose=False):
         R.append(Yi)
     if verbose:
         output_hidden_layers(X, np.array(R))
-    return np.array(R[-1])
+    return np.array(R)
 
-def backward_propagate(Z, W, hidden_layers, verbose=False):
-    pass
+def backward_propagate(R, T, W, eta, hidden_layers, verbose=False):
+    """
+    Backward propagtion
+
+    Parameters
+    ----------
+    R: ndarray
+        Matrix that represents the output of each hidden layer in a previous 
+        forward propagate iteration
+
+    T: ndarray
+        Target vector
+
+    W: ndarray
+        Matrix of current weights for each layer
+
+    hidden_layers: list
+        Represents the number of layers (len(hidden_layers)) plus the number of 
+        neurons per hidden layer (hidden_layers[i])
+    """
+    new_W = W.copy()
+    new_W[::-1]
+    for idx, HL in enumerate(R[::-1][0]): #HL: hidden layer
+        print(HL)
+        print(T[-1+idx])
+        delta_E_Z = HL - T[-1+idx] 
+        delta_Z_net = HL*(1-HL)
+        delta_net_V = R[idx]
+        delta_E_V = delta_E_Z * delta_Z_net * delta_net_V
+        W2 = new_W[idx][:, 1:] - (eta * delta_E_V)
+        #print(f'DeltaEZ: {delta_E_Z} \nDeltaZNet: {delta_Z_net} \nDeltaNetV{delta_net_V} \nDeltaEV {delta_E_V}', end='\n\n')
+        #print(f'W: {W2}', end='\n\n')
+    return new_W
 
 def output_hidden_layers(X, HL):
     num_layers = HL.shape[0]
@@ -66,56 +98,53 @@ def generate_weights(X, layers):
         num_neuron = layer.shape[0]
 
 
-"Alberto"
 def generate_weights(X, layers):
+	w=[]
+	#Se crean los pesos para X0 en cada capa
+	weights0=[]
+	for i in range(len(layers)+1):
+		weights0.append(round(random.uniform(-0.05, 0.05),2))
+	aux=[]
+	for i in range(layers[0]):
+		auxI=[]
+		for j in range(X.shape[1]+1):
+			if(j==0):
+				auxI.append(weights0[0])
+			else:
+				auxI.append(round(random.uniform(-0.05, 0.05),2))
+		auxI=np.array(auxI)
+		aux.append(auxI)
+	w.append(aux)
+	for i in range(1,len(layers)):
+		print("entro")
+		aux=[]	
+		for j in range(layers[i]):
+			auxI=[]
+			for k in range(layers[i-1]+1):
+				if(k==0):
+					auxI.append(weights0[i])
+				else:
+					auxI.append(round(random.uniform(-0.05, 0.05),2))
+			auxI=np.array(auxI)
+			aux.append(auxI)
+		w.append(aux)
+	aux=[]
+	for i in range(X.shape[1]):
+		auxI=[]
+		for j in range(layers[-1]+1):
+			if(j==0):
+				auxI.append(weights0[len(layers)])
+			else:
+				auxI.append(round(random.uniform(-0.05, 0.05),2))
+		auxI=np.array(auxI)
+		aux.append(auxI)
+	w.append(aux)
+	return np.array(w)
 
-    w=[]
-    for i in range((len(X)+1)*(layers[0]+1)):
-        w.append(0.1)
-    
-    for i in range(len(layers)-1):
-
-        for j in range(1,(layers[i-1]+1)*(layers[i]+1)):
-            w.append(0.1)
-        
-    for i in range(layers[-1]+1):
-        w.append(0.1)
-
-    return w
 
 
-"""
-INPUT:
-X = np.array([
-        [0.5, 0.1]
-    ])
 
-1 capa con 2 neuronas
-layers = [2]
-
-PROCESS:
-generate_weights(X, layers)
-    W = []
-    for ...
-        w_i = []
-        procesamiento
-        W.append(np.array(w_i))
-    return np.array(W)
-
-OUTPUT
-W = np.array([
-    np.array([
-        [0.35, 0.15, 0.2],
-        [0.35, 0.25, 0.3]
-    ]),
-    np.array([
-        [0.6, 0.4, 0.45],
-        [0.6, 0.5, 0.55]
-    ])
-])
-"""
-
-def neural_network(X, Y, hidden_layers, verbose=False):
+def neural_network(X, Y, eta, hidden_layers, verbose=False):
     """
     Implements backpropagation algorithm
 
@@ -136,7 +165,6 @@ def neural_network(X, Y, hidden_layers, verbose=False):
                 hidden layer #1 = hidden_layers[0] = 3
                 hidden layer #2 = hidden_layers[1] = 5
     """
-    #W = generate_weights(X, hidden_layers)
     W = np.array([
         np.array([
             [0.35, 0.15, 0.2],
@@ -147,15 +175,20 @@ def neural_network(X, Y, hidden_layers, verbose=False):
             [0.6, 0.5, 0.55]
         ])
     ])
+    #W = generate_weights(X, hidden_layers)
     #Forward propagation
-    Z = forward_propagate(X, W, hidden_layers, verbose)
+    R = forward_propagate(X, W, hidden_layers, verbose)
+    Z = R[-1]
     E = error(T, Z)
-    print(E)
+    if verbose:
+        print(E)
+    backward_propagate(R, T, W, eta, hidden_layers)
     
 
 if __name__ == '__main__':
     X = np.array([[0.05, 0.1]])
     T = np.array([[0.01, 0.99]])
     hidden_layers = [2] #a neural network with one hidden layer and 2 neurons
-    neural_network(X, T, hidden_layers, verbose=True)
+    eta = 0.5
+    neural_network(X, T, eta, hidden_layers, verbose=False)
     
