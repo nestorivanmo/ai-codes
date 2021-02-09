@@ -65,19 +65,23 @@ def backward_propagate(R, T, W, eta, hidden_layers, verbose=False):
         Represents the number of layers (len(hidden_layers)) plus the number of 
         neurons per hidden layer (hidden_layers[i])
     """
-    new_W = W.copy()
-    new_W[::-1]
-    for idx, HL in enumerate(R[::-1][0]): #HL: hidden layer
-        print(HL)
-        print(T[-1+idx])
-        delta_E_Z = HL - T[-1+idx] 
-        delta_Z_net = HL*(1-HL)
-        delta_net_V = R[idx]
-        delta_E_V = delta_E_Z * delta_Z_net * delta_net_V
-        W2 = new_W[idx][:, 1:] - (eta * delta_E_V)
-        #print(f'DeltaEZ: {delta_E_Z} \nDeltaZNet: {delta_Z_net} \nDeltaNetV{delta_net_V} \nDeltaEV {delta_E_V}', end='\n\n')
-        #print(f'W: {W2}', end='\n\n')
+    new_W = W[::-1]
+    for idx, HL in enumerate(R[::-1]): #HL: hidden layer
+        #Hidden Layers
+        if idx < R.shape[0]-1:
+            new_W[idx][:, 1:] = hidden_layer(HL, T, R, idx, new_W)
+            continue
+        new_W[idx][:, 1:] = initial_weights(HL, T, R, idx, new_W)
+        print(f'new_W: \n{new_W}', end='\n\n')
     return new_W
+
+def hidden_layer(HL, T, R, idx, W):
+    d_EZ = HL - T
+    d_Znet = HL*(1-HL)
+    alpha = d_EZ * d_Znet
+    d_netV = R[idx]
+    d_EV = alpha.T @ d_netV
+    return W[idx][:, 1:] - (eta * d_EV)
 
 def output_hidden_layers(X, HL):
     num_layers = HL.shape[0]
@@ -90,13 +94,6 @@ def output_hidden_layers(X, HL):
 
 def error(T, Z):
     return (0.5*(T[0]-Z[0])**2).sum()
-
-def generate_weights(X, layers):
-    num_input = X.shape[1]
-    num_layers = layers.shape[0] + 1 # +1 para considerar los pesos de y a z
-    for layer in layers:
-        num_neuron = layer.shape[0]
-
 
 def generate_weights(X, layers):
 	w=[]
@@ -140,8 +137,6 @@ def generate_weights(X, layers):
 		aux.append(auxI)
 	w.append(aux)
 	return np.array(w)
-
-
 
 
 def neural_network(X, Y, eta, hidden_layers, verbose=False):
