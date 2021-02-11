@@ -1,12 +1,15 @@
-import numpy as np 
+import numpy as np
 import copy
 import random
+
 
 def net(w0, W, X):
     return (w0 + np.dot(W, X.T))[0]
 
+
 def o(net):
     return 1 / (1 + np.e ** (-net))
+
 
 def forward_propagate(X, W, L, verbose=False):
     """
@@ -45,6 +48,7 @@ def forward_propagate(X, W, L, verbose=False):
         output_hidden_layers(X, np.array(R))
     return np.array(R)
 
+
 def backward_propagate(R, T, W, eta, hidden_layers, verbose=False):
     """
     Backward propagtion
@@ -71,9 +75,9 @@ def backward_propagate(R, T, W, eta, hidden_layers, verbose=False):
         if idx < R.shape[0]-1:
             new_W[idx][:, 1:] = hidden_layer(HL, T, R, idx, new_W)
             continue
-        new_W[idx][:, 1:] = initial_weights(HL, T, R, idx, new_W)
-        print(f'new_W: \n{new_W}', end='\n\n')
+        initial_weights(X, HL, T, R, idx, new_W, eta)
     return new_W
+
 
 def hidden_layer(HL, T, R, idx, W):
     d_EZ = HL - T
@@ -82,6 +86,17 @@ def hidden_layer(HL, T, R, idx, W):
     d_netV = R[idx]
     d_EV = alpha.T @ d_netV
     return W[idx][:, 1:] - (eta * d_EV)
+
+def initial_weights(X, HL, T, R, idx, new_W, eta):
+    curr_W = new_W[1][:,1:]
+    Y = R[0]
+    Z = R[1]
+    V = np.diagonal(new_W[0][:,1:])
+    deltaE = np.sum(np.outer(V, (Z-T)*(Z*(1-Z))),axis=1)
+    deltaEW = np.outer(deltaE*Y*(1-Y),X)
+    new_weights = curr_W - eta*deltaEW
+    new_W[1][:,1:] = new_weights
+
 
 def output_hidden_layers(X, HL):
     num_layers = HL.shape[0]
@@ -92,54 +107,55 @@ def output_hidden_layers(X, HL):
             continue
         print(f"Output: \n\t {HL[i-1]}")
 
-def error(T, Z):
+
+def calculate_error(T, Z):
     return (0.5*(T[0]-Z[0])**2).sum()
 
+
 def generate_weights(X, layers):
-	w=[]
-	#Se crean los pesos para X0 en cada capa
-	weights0=[]
-	for i in range(len(layers)+1):
-		weights0.append(round(random.uniform(-0.05, 0.05),2))
-	aux=[]
-	for i in range(layers[0]):
-		auxI=[]
-		for j in range(X.shape[1]+1):
-			if(j==0):
-				auxI.append(weights0[0])
-			else:
-				auxI.append(round(random.uniform(-0.05, 0.05),2))
-		auxI=np.array(auxI)
-		aux.append(auxI)
-	w.append(aux)
-	for i in range(1,len(layers)):
-		print("entro")
-		aux=[]	
-		for j in range(layers[i]):
-			auxI=[]
-			for k in range(layers[i-1]+1):
-				if(k==0):
-					auxI.append(weights0[i])
-				else:
-					auxI.append(round(random.uniform(-0.05, 0.05),2))
-			auxI=np.array(auxI)
-			aux.append(auxI)
-		w.append(aux)
-	aux=[]
-	for i in range(X.shape[1]):
-		auxI=[]
-		for j in range(layers[-1]+1):
-			if(j==0):
-				auxI.append(weights0[len(layers)])
-			else:
-				auxI.append(round(random.uniform(-0.05, 0.05),2))
-		auxI=np.array(auxI)
-		aux.append(auxI)
-	w.append(aux)
-	return np.array(w)
+    w=[]
+    #Se crean los pesos para X0 en cada capa
+    weights0=[]
+    for i in range(len(layers)+1):
+        weights0.append(round(random.uniform(-0.05, 0.05),2))
+    aux=[]
+    for i in range(layers[0]):
+        auxI=[]
+        for j in range(X.shape[1]+1):
+            if(j==0):
+                auxI.append(weights0[0])
+            else:
+                auxI.append(round(random.uniform(-0.05, 0.05),2))
+        auxI=np.array(auxI)
+        aux.append(auxI)
+    w.append(aux)
+    for i in range(1,len(layers)):
+        aux=[]
+        for j in range(layers[i]):
+            auxI=[]
+            for k in range(layers[i-1]+1):
+                if(k==0):
+                    auxI.append(weights0[i])
+                else:
+                    auxI.append(round(random.uniform(-0.05, 0.05),2))
+            auxI=np.array(auxI)
+            aux.append(auxI)
+        w.append(aux)
+    aux=[]
+    for i in range(X.shape[1]):
+        auxI=[]
+        for j in range(layers[-1]+1):
+            if(j==0):
+                auxI.append(weights0[len(layers)])
+            else:
+                auxI.append(round(random.uniform(-0.05, 0.05),2))
+        auxI=np.array(auxI)
+        aux.append(auxI)
+    w.append(aux)
+    return np.array(w)
 
 
-def neural_network(X, Y, eta, hidden_layers, verbose=False):
+def neural_network(X, Y, eta, hidden_layers, error=0.2, verbose=False):
     """
     Implements backpropagation algorithm
 
@@ -160,30 +176,38 @@ def neural_network(X, Y, eta, hidden_layers, verbose=False):
                 hidden layer #1 = hidden_layers[0] = 3
                 hidden layer #2 = hidden_layers[1] = 5
     """
-    W = np.array([
-        np.array([
-            [0.35, 0.15, 0.2],
-            [0.35, 0.25, 0.3]
-        ]),
-        np.array([
-            [0.6, 0.4, 0.45],
-            [0.6, 0.5, 0.55]
-        ])
-    ])
-    #W = generate_weights(X, hidden_layers)
+    # W = np.array([
+    #     np.array([
+    #         [0.35, 0.15, 0.2],
+    #         [0.35, 0.25, 0.3]
+    #     ]),
+    #     np.array([
+    #         [0.6, 0.4, 0.45],
+    #         [0.6, 0.5, 0.55]
+    #     ])
+    # ])
+    W = generate_weights(X, hidden_layers)
+    print(W)
     #Forward propagation
     R = forward_propagate(X, W, hidden_layers, verbose)
     Z = R[-1]
-    E = error(T, Z)
-    if verbose:
-        print(E)
-    backward_propagate(R, T, W, eta, hidden_layers)
-    
+    E = calculate_error(T, Z)
+    print(f"Initial error {E}")
+    num_iter = 1
+    while E > error:
+        W = backward_propagate(R, T, W, eta, hidden_layers)
+        R = forward_propagate(X, W, hidden_layers, verbose)
+        Z = R[-1]
+        E = calculate_error(T, Z)
+        print(f"i: {num_iter} error: {E}")
+        num_iter += 1
+    print("Finished")
+
 
 if __name__ == '__main__':
     X = np.array([[0.05, 0.1]])
     T = np.array([[0.01, 0.99]])
-    hidden_layers = [2] #a neural network with one hidden layer and 2 neurons
-    eta = 0.5
-    neural_network(X, T, eta, hidden_layers, verbose=False)
-    
+    hidden_layers = [2,2] #a neural network with one hidden layer and 2 neurons
+    eta = 0.9
+    error = 0.05
+    neural_network(X, T, eta, hidden_layers, error, verbose=False)
