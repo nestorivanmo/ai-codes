@@ -202,6 +202,7 @@ def neural_network(X, Y, eta, hidden_layers, error=0.2, verbose=False):
         print(f"i: {num_iter} error: {E}")
         num_iter += 1
     print("Finished")
+    return R
 
 
 if __name__ == '__main__':
@@ -210,4 +211,5 @@ if __name__ == '__main__':
     hidden_layers = [2,2] #a neural network with one hidden layer and 2 neurons
     eta = 0.9
     error = 0.05
-    neural_network(X, T, eta, hidden_layers, error, verbose=False)
+    R = neural_network(X, T, eta, hidden_layers, error, verbose=False)
+    print(R)
